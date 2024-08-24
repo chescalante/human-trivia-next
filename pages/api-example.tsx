@@ -8,12 +8,26 @@ export default function ApiExamplePage() {
       <p>
         <em>You must be signed in to see responses.</em>
       </p>
-      <h2>Session</h2>
+      <h2>Game.get</h2>
       <p>/api/examples/session</p>
-      <iframe src="/api/examples/session" />
-      <h2>JSON Web Token</h2>
-      <p>/api/examples/jwt</p>
-      <iframe src="/api/examples/jwt" />
+      <iframe src="/api/game/get" />
+      <h2>Game.finish</h2>
+      <p>/api/examples/session</p>
+      <iframe src="/api/game/finish" />
+      <h2>Game.start</h2>
+      <p>/api/examples/session</p>
+      <iframe src="/api/game/start" />
+      <h2>Session</h2>
+      <p>/api/trivia/get</p>
+      <iframe src="/api/trivia/get" />
+      <h2>Session</h2>
+      <p>/api/trivia/join</p>
+      <iframe src="/api/trivia/join" />
+      <h2>Session</h2>
+      <p>/api/question/answer</p>
+      <iframe src="/api/question/answer" />
+      <p>/api/question/get</p>
+      <iframe src="/api/question/get" />
     </Layout>
   )
 }

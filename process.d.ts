@@ -1,5 +1,6 @@
 declare namespace NodeJS {
   export interface ProcessEnv {
+    DB_URI: string
     NEXTAUTH_URL: string
     NEXTAUTH_SECRET: string
     GITHUB_ID: string
