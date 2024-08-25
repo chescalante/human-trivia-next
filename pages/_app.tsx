@@ -3,7 +3,7 @@ import "./styles.css"
 
 import type { AppProps } from "next/app"
 import type { Session } from "next-auth"
-
+import eruda from "eruda";
 
 
 // Use of the <SessionProvider> is mandatory to allow components that call
@@ -12,6 +12,9 @@ export default function App({
   Component,
   pageProps: { session, ...pageProps },
 }: AppProps<{ session: Session }>) {
+
+  eruda.init();
+
   return (
     <SessionProvider session={session}>
       <Component {...pageProps} />
