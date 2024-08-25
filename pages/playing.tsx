@@ -67,12 +67,12 @@ export default function Playing() {
       });
       console.log("question: ", await res.json());
 
-      const successfull = (await res.json()).success;
+      const successful = (await res.json()).success;
 
-      setAnswered(successfull);
+      setAnswered(successful);
       /* setQuestion(question + 1);
       setCount(SECONDS_TO_WAIT); */
-      if (question === 3) {
+      if (successful) {
         // @ts-ignore
         document.getElementById("my_modal_5")?.showModal();
       } else {
