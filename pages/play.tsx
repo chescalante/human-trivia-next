@@ -43,6 +43,7 @@ export default function Play() {
         <div
           className="radial-progress"
           style={{
+            // @ts-ignore
             "--value": radialValue,
             color: "#42CBFF",
             "--size": "16rem",
@@ -50,6 +51,7 @@ export default function Play() {
           role="progressbar"
         >
           <span className="countdown font-mono text-6xl text-black">
+            {/*  @ts-ignore */}
             <span style={{ "--value": count }}></span>
           </span>
         </div>
