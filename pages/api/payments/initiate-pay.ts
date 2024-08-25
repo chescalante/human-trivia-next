@@ -24,11 +24,12 @@ export default async function handler(
 
     const paymentsCollection = db.collection<Payment>("payments");
 
-    paymentsCollection.insertOne({
+    await paymentsCollection.insertOne({
       reference: uuid,
       status: "pending",
       user: session.user?.name ?? "failed-to-retrieve-user",
       gameId: currentGame._id,
+      redeemed: false,
     });
 
     return res.send({

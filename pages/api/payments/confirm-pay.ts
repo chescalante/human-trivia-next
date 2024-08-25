@@ -51,9 +51,15 @@ export default async function handler(
         transaction.reference == currentPayment.reference &&
         transaction.status != "failed";
 
-      paymentsCollection.updateOne(
+      await paymentsCollection.updateOne(
         { _id: currentPayment._id },
-        { status: success ? "paid" : "failed", wallet: transaction.from }
+        {
+          $set: {
+            ...currentPayment,
+            status: success ? "paid" : "failed",
+            wallet: transaction.from,
+          },
+        }
       );
 
       return res.send({ success });

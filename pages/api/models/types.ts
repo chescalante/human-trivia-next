@@ -4,11 +4,9 @@ export interface Game {
   active: boolean;
   startDate: Date;
   finishDate: Date;
-  winners: string[]; //userIds
   prizePool: number;
   playersCount: number;
   ticketPrice: number;
-  // fee: number; //Should be an env var but don't forget your piece of cake
 }
 
 export interface Question {
@@ -35,7 +33,8 @@ export interface ITriviaQuestion {
 export interface Payment {
   reference: string;
   status: "pending" | "paid" | "failed";
-  user?: string;
+  user: string;
   wallet?: string;
   gameId: ObjectId;
+  redeemed: boolean;
 }

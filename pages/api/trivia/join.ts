@@ -4,7 +4,7 @@ import { authOptions } from "../auth/[...nextauth]";
 
 import type { NextApiRequest, NextApiResponse } from "next";
 import { connectMongo } from "../../../lib/mongodb";
-import { Game, Trivia } from "../models/types";
+import { Game, Payment, Trivia } from "../models/types";
 
 export default async function handler(
   req: NextApiRequest,
@@ -20,7 +20,6 @@ export default async function handler(
 
   try {
     const db = await connectMongo();
-    const userWallet = "0xblabla";
 
     const currentGame = await db
       .collection<Game>("games")
@@ -28,16 +27,39 @@ export default async function handler(
 
     if (!currentGame) throw new Error("Failed to retrieve current game");
 
-    const triviaCollection = db.collection<Trivia>("trivia");
+    const triviaCollection = db.collection<Trivia>("trivias");
     const trivia = await triviaCollection.findOne({
-      user: userWallet,
+      user: session.user?.name ?? "failed-to-retrieve-user",
       gameId: currentGame._id,
     });
 
     if (trivia) throw new Error("User already participating on the the trivia");
 
+    // verify payment
+
+    const paymentsCollection = db.collection<Payment>("payments");
+
+    const currentPayment = await paymentsCollection.findOne({
+      gameId: currentGame._id,
+      status: "paid",
+      user: session.user?.name ?? "failed-to-retrieve-user",
+      redeemed: false,
+    });
+
+    if (!currentPayment) throw new Error("Payment not found");
+
+    await paymentsCollection.updateOne(
+      { _id: currentPayment._id },
+      {
+        $set: {
+          ...currentPayment,
+          redeemed: true,
+        },
+      }
+    );
+
     const newTrivia = await triviaCollection.insertOne({
-      user: userWallet,
+      user: session.user?.name ?? "failed-to-retrieve-user",
       gameId: currentGame._id,
       triviaStatus: "running",
       questions: [],

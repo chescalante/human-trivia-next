@@ -9,7 +9,6 @@ export type GameReply = {
   id: string;
   startDate: Date;
   finishDate: Date;
-  winners: string[]; //userIds
   prizePool: number;
   playersCount: number;
   ticketPrice: number;

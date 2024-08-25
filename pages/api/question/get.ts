@@ -22,8 +22,6 @@ export default async function handler(
   try {
     const db = await connectMongo();
 
-    const userWallet = "0xblabla";
-
     const gamesCollection = db.collection<Game>("games");
     const triviasCollection = db.collection<Trivia>("trivias");
     const questionsCollection = db.collection<Question>("questions");
@@ -33,7 +31,7 @@ export default async function handler(
 
     const trivia = await triviasCollection.findOne({
       filter: {
-        user: userWallet,
+        user: session.user?.name ?? "failed-to-retrieve-user",
         gameId: currentGame._id,
       },
     });
@@ -55,10 +53,12 @@ export default async function handler(
 
     triviasCollection.updateOne(
       {
-        user: userWallet,
+        user: session.user?.name ?? "failed-to-retrieve-user",
         gameId: currentGame._id,
       },
-      trivia
+      {
+        $set: trivia,
+      }
     );
     return res.send({ ...currentQuestion });
   } catch (error) {
