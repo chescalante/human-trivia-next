@@ -7,9 +7,12 @@ import {
   MiniAppPaymentPayload,
 } from "@worldcoin/minikit-js";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { createPublicClient, http, parseAbiItem } from "viem";
+import { optimism } from "viem/chains";
 
 export default function Pay() {
+  const [paymentId, setPaymentId] = useState();
   const router = useRouter();
 
   const sendPayment = async () => {
@@ -17,6 +20,7 @@ export default function Pay() {
       method: "POST",
     });
     const { id } = await res.json();
+    setPaymentId(id);
 
     const payload: PayCommandInput = {
       reference: id,
@@ -35,29 +39,50 @@ export default function Pay() {
     }
   };
 
+  const publicClient = createPublicClient({
+    chain: optimism,
+    transport: http()
+  })
+
+  const WLD_COIN_TOKEN_CONTRACT = "0xdC6fF44d5d932Cbd77B52E5612Ba0529DC6226F1";
+  const unwatch = publicClient.watchEvent({
+    address: WLD_COIN_TOKEN_CONTRACT,
+    event: parseAbiItem('event Transfer(address indexed from, address indexed to, uint256 value)'),
+    args: {
+      to: '0xd59664CD61db33814fBe16Eb96fd0bf00de39f7d',
+    },
+    onLogs: (logs) => { logs.forEach(x => x.transactionHash); router.push(" /play"); }
+  })
+
   useEffect(() => {
-    if (!MiniKit.isInstalled()) {
-      console.error("MiniKit is not installed");
-      return;
-    }
+    // Minikit evenbt subscribe failing
+    // Workaround with blockchain watcher.
 
-    MiniKit.subscribe(
-      ResponseEvent.MiniAppPayment,
-      (response: MiniAppPaymentPayload) => {
-        if (response.status == "success") {
-          fetch(`/api/payments/confirm-pay`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(response),
-          }).then(x => x.json())
-            .then(x => { if (x.success) router.push("/play"); });
-        }
-      }
-    );
+    // if (!MiniKit.isInstalled()) {
+    //   console.error("MiniKit is not installed");
+    //   return;
+    // }
 
+    // MiniKit.subscribe(
+    //   ResponseEvent.MiniAppPayment,
+    //   (response: MiniAppPaymentPayload) => {
+    //     if (response.status == "success") {
+    //       fetch(`/api/payments/confirm-pay`, {
+    //         method: "POST",
+    //         headers: { "Content-Type": "application/json" },
+    //         body: JSON.stringify(response),
+    //       }).then(x => x.json())
+    //         .then(x => { if (x.success) router.push("/play"); });
+    //     }
+    //   }
+    // );
+
+    // return () => {
+    //   MiniKit.unsubscribe(ResponseEvent.MiniAppPayment);
+    // };
     return () => {
-      MiniKit.unsubscribe(ResponseEvent.MiniAppPayment);
-    };
+      unwatch();
+    }
   }, []);
 
   return (
@@ -65,4 +90,9 @@ export default function Pay() {
       Aceptar y jugar
     </button>
   );
+}
+
+
+function watcher() {
+
 }
