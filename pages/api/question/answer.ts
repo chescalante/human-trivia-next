@@ -11,19 +11,13 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const session = await getServerSession(req, res, authOptions);
-  req.query;
-  // const props = JSON.parse(req.body);
-  // console.log("req.body: ", props);
-  // console.log("req.body.answer: ", props.answer);
-  console.log("req.query;: ", req.query);
-  console.log("body: ", req.body);
+
   const payload = JSON.parse(req.body);
 
   if (!payload.answer)
     return res.send({
       error: "Answer must be provided",
     });
-  //Check if req.body contains answer
 
   if (!session)
     return res.send({
@@ -47,7 +41,6 @@ export default async function handler(
     });
 
     if (!trivia) throw new Error("user not allowed in the game");
-    console.log({ trivia });
     const currentQuestion = trivia.questions.pop();
 
     if (!currentQuestion || currentQuestion.answer)
@@ -77,7 +70,7 @@ export default async function handler(
         $set: trivia,
       }
     );
-    return res.send({ success: true });
+    return res.send({ success: isAnswerCorrect });
   } catch (error) {
     console.error({ error });
     throw new Error("Unexpected error answering question");

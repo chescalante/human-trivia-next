@@ -65,8 +65,10 @@ export default function Playing() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ answer }),
       });
-      console.log("question: ", res.json());
-      const successfull = !!(await res.json());
+      console.log("question: ", await res.json());
+
+      const successfull = (await res.json()).success;
+
       setAnswered(successfull);
       /* setQuestion(question + 1);
       setCount(SECONDS_TO_WAIT); */
