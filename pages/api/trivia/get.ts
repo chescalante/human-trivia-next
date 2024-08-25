@@ -33,14 +33,13 @@ export default async function handler(
     const gamesCollection = db.collection<Game>("games");
     const triviaCollection = db.collection<Trivia>("trivias");
 
-    const userWallet = "0xblabla";
     const currentGame = await gamesCollection.findOne({ active: true });
 
     if (!currentGame) throw new Error("Failed to retrieve current game");
     console.log("currentGame: ", currentGame);
 
     const trivia = await triviaCollection.findOne({
-      user: userWallet,
+      user: session.user?.name ?? "failed-to-retrieve-user",
       gameId: currentGame._id,
     });
 

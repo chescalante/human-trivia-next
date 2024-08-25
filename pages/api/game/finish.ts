@@ -5,7 +5,7 @@ import { authOptions } from "../auth/[...nextauth]";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { connectMongo } from "../../../lib/mongodb";
 import { addDays } from "date-fns";
-import { Game } from "../models/types";
+import { Game, Payment, Trivia } from "../models/types";
 
 export default async function handler(
   req: NextApiRequest,
@@ -29,20 +29,44 @@ export default async function handler(
 
     currentGame.active = false;
 
-    gamesCollection.updateOne({ _id: currentGame._id }, currentGame);
+    gamesCollection.updateOne({ _id: currentGame._id }, { $set: currentGame });
+
+    const triviasCollection = db.collection<Trivia>("trivias");
+
+    const successfulTrivias = await triviasCollection
+      .find({
+        gameId: currentGame._id,
+        triviaStatus: "success",
+      })
+      .toArray();
+
+    const paymentsCollection = db.collection<Payment>("payments");
+
+    const prize = currentGame.prizePool / successfulTrivias.length;
+
+    for (let i = 0; i < successfulTrivias.length; i++) {
+      const trivia = successfulTrivias[i];
+
+      const currentPayment = await paymentsCollection.findOne({
+        gameId: currentGame._id,
+        user: trivia.user,
+      });
+
+      const wallet = currentPayment.wallet;
+
+      if (wallet) {
+        // transfer money
+      }
+    }
+
     gamesCollection.insertOne({
       active: true,
       startDate: new Date(),
       finishDate: addDays(Date.now(), 1),
-      winners: [], //userIds
-      prizePool: 0, // TODO: Define prizepool
+      prizePool: successfulTrivias.length === 0 ? currentGame.prizePool : 0, // TODO: Define prizepool
       playersCount: 0,
       ticketPrice: 0, //TODO: Ticket price
     });
-
-    //Split prize
-    const prize = currentGame.prizePool / currentGame.winners.length;
-    //SEND MONEY TO WINNERS with private key
 
     return res.send({});
   } catch (error) {

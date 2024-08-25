@@ -31,7 +31,6 @@ export default async function handler(
     await gamesCollection.insertOne({
       startDate: new Date(),
       finishDate: addDays(Date.now(), 1),
-      winners: [], //userIds
       prizePool: 1000, // TODO: Define prizepool
       playersCount: 0,
       ticketPrice: 0, //TODO: Ticket price
