@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import questionAnimation from "../public/images/question-animation.json";
 import dynamic from "next/dynamic";
+import MyModal from "../components/modal";
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 const SECONDS_TO_WAIT = 5;
@@ -22,7 +23,8 @@ export default function Playing() {
 
       return () => clearInterval(interval);
     } else {
-      document.getElementById("my_modal_5").showModal();
+      // @ts-ignore
+      document.getElementById("my_modal_5")?.showModal();
     }
   }, [count]);
 
@@ -93,20 +95,7 @@ export default function Playing() {
           </button>
         </div>
       </div>
-      <dialog id="my_modal_5" className="modal">
-        <div className="modal-box">
-          <h3 className="font-bold text-lg">Hello!</h3>
-          <p className="py-4">
-            Press ESC key or click the button below to close
-          </p>
-          <div className="modal-action">
-            <form method="dialog">
-              {/* if there is a button in form, it will close the modal */}
-              <button className="btn">Close</button>
-            </form>
-          </div>
-        </div>
-      </dialog>
+      <MyModal />
     </Layout>
   );
 }

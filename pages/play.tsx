@@ -3,7 +3,7 @@ import Layout from "../components/layout";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
-const SECONDS_TO_WAIT = 5;
+const SECONDS_TO_WAIT = 3;
 const UPDATE_INTERVAL = 10; // Update every 100ms
 
 export default function Play() {
