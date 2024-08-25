@@ -4,7 +4,7 @@ import { authOptions } from "../auth/[...nextauth]";
 
 import type { NextApiRequest, NextApiResponse } from "next";
 import { connectMongo } from "../../../lib/mongodb";
-import { Game, Trivia } from "../models/types";
+import { Game, Question, Trivia } from "../models/types";
 
 export default async function handler(
   req: NextApiRequest,
@@ -36,6 +36,7 @@ export default async function handler(
 
     const gamesCollection = db.collection<Game>("games");
     const triviasCollection = db.collection<Trivia>("trivias");
+    const questionsCollection = db.collection<Question>("questions");
     const currentGame = await gamesCollection.findOne({ active: true });
 
     if (!currentGame) throw new Error("Failed to retrieve current game");
@@ -52,10 +53,30 @@ export default async function handler(
     if (!currentQuestion || currentQuestion.answer)
       throw new Error("failed to retrieve current question");
 
-    currentQuestion.success = req.body.answer === currentQuestion.correctAnswer;
+    const dbQuestion = await questionsCollection.findOne({
+      _id: currentQuestion._id,
+    });
+    if (!dbQuestion) throw new Error("couldnt retrieve question from db");
+
+    const isAnswerCorrect = req.body.answer === dbQuestion?.correctAnswer;
+
     trivia.questions = [...trivia.questions, currentQuestion];
 
-    return currentQuestion.success;
+    trivia.triviaStatus = isAnswerCorrect
+      ? trivia.questions.length > 11
+        ? "success"
+        : "running"
+      : "failed";
+
+    triviasCollection.updateOne(
+      {
+        user: userWallet,
+        gameId: currentGame?._id,
+      },
+      trivia
+    );
+
+    return isAnswerCorrect;
   } catch (error) {
     throw new Error("Unexpected error answering question");
   }

@@ -5,7 +5,7 @@ import { authOptions } from "../auth/[...nextauth]";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { connectMongo } from "../../../lib/mongodb";
 import { randomInt } from "crypto";
-import { Game, Question, Trivia } from "../models/types";
+import { Game, ITriviaQuestion, Question, Trivia } from "../models/types";
 
 export default async function handler(
   req: NextApiRequest,
@@ -38,15 +38,28 @@ export default async function handler(
       },
     });
 
+    if (!trivia) throw new Error("Failed to retrieve current game");
+
     const difficulty = Math.floor(trivia?.questions.length ?? 0 / 4) + 1;
 
     const questions = await questionsCollection.find({ difficulty }).toArray();
     let rng = (randomInt(3000) % questions.length) + 1;
 
-    const currentQuestion = questions[rng];
+    const { correctAnswer, ...currentQuestion } = questions[rng];
 
     if (!currentQuestion) throw new Error("couldn't retrieve a new question");
 
+    const currQuestion: ITriviaQuestion = { ...currentQuestion, answer: "" };
+
+    trivia.questions = [...trivia?.questions, currQuestion];
+
+    triviasCollection.updateOne(
+      {
+        user: userWallet,
+        gameId: currentGame._id,
+      },
+      trivia
+    );
     return res.send({ ...currentQuestion });
   } catch (error) {
     console.log("error: ", error);

@@ -29,7 +29,7 @@ export default async function handler(
 
     currentGame.active = false;
 
-    gamesCollection.updateOne({ _id: currentGame._id }, { ...currentGame });
+    gamesCollection.updateOne({ _id: currentGame._id }, currentGame);
     gamesCollection.insertOne({
       active: true,
       startDate: new Date(),

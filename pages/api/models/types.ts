@@ -21,14 +21,13 @@ export interface Question {
 export interface Trivia {
   user: string;
   gameId: ObjectId;
-  triviaStatus: "success" | "running";
+  triviaStatus: "success" | "running" | "failed";
   questions: ITriviaQuestion[];
 }
 
-interface ITriviaQuestion {
+export interface ITriviaQuestion {
+  _id: ObjectId;
   text: string;
   answer: string;
   difficulty: number;
-  success: boolean;
-  correctAnswer: string;
 }
