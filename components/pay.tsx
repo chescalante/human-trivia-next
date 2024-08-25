@@ -6,13 +6,11 @@ import {
   ResponseEvent,
   MiniAppPaymentPayload,
 } from "@worldcoin/minikit-js";
-import eruda from "eruda";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export default function Pay() {
   const router = useRouter();
-  const [isInstalled, setIsInstalled] = useState(false)
 
   const sendPayment = async () => {
     const res = await fetch("/api/payments/initiate-pay", {

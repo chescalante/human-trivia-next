@@ -1,5 +1,6 @@
 import { MiniKit } from "@worldcoin/minikit-js";
 import { ReactNode, useEffect } from "react";
+import Header from "./header";
 
 function MiniKitProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
@@ -12,6 +13,7 @@ function MiniKitProvider({ children }: { children: ReactNode }) {
 export default function Layout({ children }: { children: ReactNode }) {
   return (
     <MiniKitProvider>
+      <Header />
       <div className="max-w-lg m-auto" style={{ height: "90vh" }}>{children}</div>
     </MiniKitProvider>
   );
