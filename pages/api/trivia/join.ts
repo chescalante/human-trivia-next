@@ -10,14 +10,14 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const session = await getServerSession(req, res, authOptions);
+  /* const session = await getServerSession(req, res, authOptions);
 
   if (!session)
     return res.send({
       error:
         "You must be signed in to view the protected content on this page.",
     });
-
+ */
   try {
     const db = await connectMongo();
     const userWallet = "0xblabla";
@@ -28,13 +28,13 @@ export default async function handler(
 
     if (!currentGame) throw new Error("Failed to retrieve current game");
 
-    const triviaCollection = db.collection<Trivia>("trivia");
+    const triviaCollection = db.collection<Trivia>("trivias");
     const trivia = await triviaCollection.findOne({
       user: userWallet,
       gameId: currentGame._id,
     });
 
-    if (trivia) throw new Error("User already participating on the the trivia");
+    if (trivia) return res.send({ ...trivia }); // throw new Error("User already participating on the the trivia");
 
     const newTrivia = await triviaCollection.insertOne({
       user: userWallet,

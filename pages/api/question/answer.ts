@@ -12,7 +12,7 @@ export default async function handler(
 ) {
   const session = await getServerSession(req, res, authOptions);
 
-  // const props = JSON.parse(req.body);
+  /* // const props = JSON.parse(req.body);
   // console.log("req.body: ", props);
   // console.log("req.body.answer: ", props.answer);
   console.log("body: ", req.body);
@@ -28,7 +28,7 @@ export default async function handler(
       error:
         "You must be signed in to view the protected content on this page.",
     });
-
+ */
   try {
     const db = await connectMongo();
 
@@ -47,7 +47,7 @@ export default async function handler(
     });
 
     if (!trivia) throw new Error("user not allowed in the game");
-
+    console.log({ trivia });
     const currentQuestion = trivia.questions.pop();
 
     if (!currentQuestion || currentQuestion.answer)
@@ -76,8 +76,9 @@ export default async function handler(
       trivia
     );
 
-    return isAnswerCorrect;
+    return res.send({ success: true });
   } catch (error) {
+    console.error({ error });
     throw new Error("Unexpected error answering question");
   }
 }
