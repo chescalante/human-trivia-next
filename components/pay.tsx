@@ -6,9 +6,12 @@ import {
   ResponseEvent,
   MiniAppPaymentPayload,
 } from "@worldcoin/minikit-js";
+import { useRouter } from "next/router";
 import { useEffect } from "react";
 
 export default function Pay() {
+  const router = useRouter();
+
   const sendPayment = async () => {
     const res = await fetch("/api/payments/initiate-pay", {
       method: "POST",
@@ -21,7 +24,7 @@ export default function Pay() {
       tokens: [
         {
           symbol: Tokens.WLD,
-          token_amount: tokenToDecimals(1, Tokens.WLD).toString(),
+          token_amount: tokenToDecimals(0.001, Tokens.WLD).toString(),
         },
       ],
       description: "Pagá tu entrada para el desafío diario y ganá",
@@ -49,7 +52,7 @@ export default function Pay() {
           });
           const payment = await res.json();
           if (payment.success) {
-            // Congrats your payment was successful!
+            router.push("/play");
           }
         }
       }

@@ -58,7 +58,7 @@ export default function IndexPage() {
             </div>
           </div>
         </div>
-        {/* <Pay /> */}
+        <Pay />
         <button
           className="btn btn-primary text-lg"
           onClick={() => router.push("/play")}
