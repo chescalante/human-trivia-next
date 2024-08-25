@@ -27,7 +27,7 @@ export default async function handler(
     paymentsCollection.insertOne({
       reference: uuid,
       status: "pending",
-      user: session.user?.name,
+      user: session.user?.name ?? "failed-to-retrieve-user",
       gameId: currentGame._id,
     });
 

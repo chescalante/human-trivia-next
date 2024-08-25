@@ -32,10 +32,10 @@ export default async function handler(
     const currentPayment = await paymentsCollection.findOne({
       gameId: currentGame._id,
       status: "pending",
-      user: session.user?.name,
+      user: session.user?.name ?? "failed-to-retrieve-user",
     });
 
-    if (payload.reference === currentPayment.reference) {
+    if (currentPayment && payload.reference === currentPayment.reference) {
       const response = await fetch(
         `https://developer.worldcoin.org/api/v2/minikit/transaction/${payload.transaction_id}?app_id=${process.env.WLD_CLIENT_ID}`,
         {
@@ -51,7 +51,7 @@ export default async function handler(
         transaction.reference == currentPayment.reference &&
         transaction.status != "failed";
 
-      currentPayment.updateOne(
+      paymentsCollection.updateOne(
         { _id: currentPayment._id },
         { status: success ? "paid" : "failed", wallet: transaction.from }
       );
