@@ -7,7 +7,7 @@ import {
 
 export default function Pay() {
   const sendPayment = async () => {
-    const res = await fetch("/api/payments/initiate-payment", {
+    const res = await fetch("/api/payments/initiate-pay", {
       method: "POST",
     });
     const { id } = await res.json();
