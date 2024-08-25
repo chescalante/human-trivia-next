@@ -22,7 +22,6 @@ export default function Playing() {
   const [answers, setAnswers] = useState([]); // State to store the answer options
   const [questionData, setQuestionData] = useState<Question | null>(null); // Using the Question interface
   const [loading, setLoading] = useState(false);
-  const [answered, setAnswered] = useState(false);
 
   useEffect(() => {
     const fetchQuestion = async () => {
@@ -50,12 +49,8 @@ export default function Playing() {
       }, 1000);
 
       return () => clearInterval(interval);
-    } else {
-      // @ts-ignore
-      /*  if (!answered) {
-        document.getElementById("my_modal_5")?.showModal();
-      } */
-    }
+    } else
+      sendAnswer("Timed out!");
   }, [count]);
 
   const sendAnswer = async (answer: string) => {
@@ -69,15 +64,12 @@ export default function Playing() {
 
       const successful = res.success;
 
-      setAnswered(successful);
-      /* setQuestion(question + 1);
-      setCount(SECONDS_TO_WAIT); */
       if (successful) {
         // @ts-ignore
-        document.getElementById("my_modal_5")?.showModal();
+        document.getElementById("my_modal_success")?.showModal();
       } else {
         // @ts-ignore
-        document.getElementById("my_modal_success")?.showModal();
+        document.getElementById("my_modal_5")?.showModal();
       }
     } catch (error) {
       console.error("Failed to fetch the question:", error);
