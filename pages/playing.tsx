@@ -2,8 +2,9 @@ import Image from "next/image";
 import Layout from "../components/layout";
 import { useState } from "react";
 import { useRouter } from "next/router";
-import Lottie, { useLottie } from "lottie-react";
-import questionAnimation from "../animations/question-animation.json";
+import questionAnimation from "../public/images/question-animation.json";
+import dynamic from "next/dynamic";
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 const SECONDS_TO_WAIT = 5;
 const UPDATE_INTERVAL = 10; // Update every 100ms
