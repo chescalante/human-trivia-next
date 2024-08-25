@@ -1,9 +1,10 @@
-import { MiniKit } from "@worldcoin/minikit-js";
 import Layout from "../components/layout";
-import { useEffect, useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/router";
 
 export default function IndexPage() {
+  const router = useRouter();
+
   return (
     <Layout>
       <div className="h-full flex flex-col justify-between p-4 ">
@@ -56,7 +57,12 @@ export default function IndexPage() {
             </div>
           </div>
         </div>
-        <button className="btn btn-primary text-lg">Aceptar y jugar</button>
+        <button
+          className="btn btn-primary text-lg"
+          onClick={() => router.push("/play")}
+        >
+          Aceptar y jugar
+        </button>
       </div>
     </Layout>
   );
