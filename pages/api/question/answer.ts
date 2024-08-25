@@ -4,8 +4,7 @@ import { authOptions } from "../auth/[...nextauth]";
 
 import type { NextApiRequest, NextApiResponse } from "next";
 import { connectMongo } from "../../../lib/mongodb";
-import Game from "../models/types";
-import Trivia from "../models/trivia";
+import { Game, Trivia } from "../models/types";
 
 export default async function handler(
   req: NextApiRequest,
@@ -13,11 +12,12 @@ export default async function handler(
 ) {
   const session = await getServerSession(req, res, authOptions);
 
-  const props = JSON.parse(req.body);
-  console.log("req.body: ", props);
-  console.log("req.body.answer: ", props.answer);
+  // const props = JSON.parse(req.body);
+  // console.log("req.body: ", props);
+  // console.log("req.body.answer: ", props.answer);
+  console.log("body: ", req.body);
 
-  if (!props.answer)
+  if (!req.body.answer)
     return res.send({
       error: "Answer must be provided",
     });
@@ -52,7 +52,7 @@ export default async function handler(
     if (!currentQuestion || currentQuestion.answer)
       throw new Error("failed to retrieve current question");
 
-    currentQuestion.success = props.answer === currentQuestion.correctAnswer;
+    currentQuestion.success = req.body.answer === currentQuestion.correctAnswer;
     trivia.questions = [...trivia.questions, currentQuestion];
 
     return currentQuestion.success;

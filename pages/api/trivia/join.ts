@@ -12,11 +12,11 @@ export default async function handler(
 ) {
   const session = await getServerSession(req, res, authOptions);
 
-  // if (!session)
-  //   return res.send({
-  //     error:
-  //       "You must be signed in to view the protected content on this page.",
-  //   });
+  if (!session)
+    return res.send({
+      error:
+        "You must be signed in to view the protected content on this page.",
+    });
 
   try {
     const db = await connectMongo();
