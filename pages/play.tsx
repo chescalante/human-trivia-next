@@ -50,7 +50,7 @@ export default function Play() {
           }}
           role="progressbar"
         >
-          <span className="countdown font-mono text-6xl text-black">
+          <span className="countdown font-mono text-5xl text-black">
             {/*  @ts-ignore */}
             <span style={{ "--value": count }}></span>
           </span>

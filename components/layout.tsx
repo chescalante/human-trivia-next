@@ -12,7 +12,7 @@ function MiniKitProvider({ children }: { children: ReactNode }) {
 export default function Layout({ children }: { children: ReactNode }) {
   return (
     <MiniKitProvider>
-      <div className="h-screen max-h-screen max-w-lg m-auto">{children}</div>
+      <div className="max-w-lg m-auto" style={{ height: "90vh" }}>{children}</div>
     </MiniKitProvider>
   );
 }
