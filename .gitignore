@@ -14,7 +14,7 @@ lerna-debug.log*
 
 *.tsbuildinfo
 next-env.d.ts
-
+package-lock.json
 .next
 .vercel
 .env*.local
