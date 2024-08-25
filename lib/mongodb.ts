@@ -1,5 +1,4 @@
 import { Db, MongoClient } from "mongodb";
-import mongoose from "mongoose";
 
 const MONGO_URI = process.env.DB_URL as string;
 
