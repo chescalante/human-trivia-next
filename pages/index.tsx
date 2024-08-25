@@ -59,12 +59,6 @@ export default function IndexPage() {
           </div>
         </div>
         <Pay />
-        <button
-          className="btn btn-primary text-lg"
-          onClick={() => router.push("/play")}
-        >
-          Aceptar y jugar
-        </button>
       </div>
       <dialog id="my_modal_5" className="modal">
         <div className="modal-box">

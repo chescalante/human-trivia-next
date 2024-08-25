@@ -95,13 +95,8 @@ export default function Pay() {
   }, []);
 
   return (
-    <button className="btn btn-primary text-lg" onClick={sendPayment}>
-      Aceptar y jugar
+    <button className="btn btn-primary text-lg" onClick={sendPayment} disabled={paymentId}>
+      {paymentId ? <span className="loading loading-spinner"></span> : "Aceptar y jugar"}
     </button>
   );
-}
-
-
-function watcher() {
-
 }
