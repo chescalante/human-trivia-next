@@ -52,7 +52,7 @@ export default async function handler(
         user: trivia.user,
       });
 
-      const wallet = currentPayment.wallet;
+      const wallet = currentPayment?.wallet;
 
       if (wallet) {
         // transfer money
