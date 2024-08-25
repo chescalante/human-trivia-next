@@ -60,10 +60,12 @@ export default function Playing() {
 
   const sendAnswer = async (answer: string) => {
     try {
-      const res = await axios.post("/api/question/answer", {
-        answer: answer,
+      const res = await fetch("/api/question/answer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ answer }),
       });
-      console.log("question: ", res.data);
+      console.log("question: ", res.body);
       setAnswered(true);
       /* setQuestion(question + 1);
       setCount(SECONDS_TO_WAIT); */
