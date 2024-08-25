@@ -21,14 +21,18 @@ export default function Playing() {
   const [question, setQuestion] = useState(1); // State to store the question
   const [answers, setAnswers] = useState([]); // State to store the answer options
   const [questionData, setQuestionData] = useState<Question | null>(null); // Using the Question interface
+  const [loading, setLoading] = useState(false);
+  const [answered, setAnswered] = useState(false);
 
   useEffect(() => {
     const fetchQuestion = async () => {
       try {
+        setLoading(true);
         const response2 = await axios.get<{ question: Question }>(
           "/api/trivia/join"
         );
         const response = await axios.get<Question>("/api/question/get");
+        setLoading(false);
         console.log("question: ", response.data);
         setQuestionData(response.data);
       } catch (error) {
@@ -48,7 +52,9 @@ export default function Playing() {
       return () => clearInterval(interval);
     } else {
       // @ts-ignore
-      document.getElementById("my_modal_5")?.showModal();
+      /*  if (!answered) {
+        document.getElementById("my_modal_5")?.showModal();
+      } */
     }
   }, [count]);
 
@@ -58,15 +64,27 @@ export default function Playing() {
         answer: answer,
       });
       console.log("question: ", res.data);
-      setQuestion(question + 1);
-      setCount(SECONDS_TO_WAIT);
+      setAnswered(true);
+      /* setQuestion(question + 1);
+      setCount(SECONDS_TO_WAIT); */
       // @ts-ignore
       document.getElementById("my_modal_success")?.showModal();
     } catch (error) {
       console.error("Failed to fetch the question:", error);
     }
   };
-
+  if (loading) {
+    return (
+      <Layout>
+        <div
+          className="flex flex-col p-4 justify-between"
+          style={{ height: "90vh" }}
+        >
+          <div className="loading loading-spinner loading-lg m-auto text-black mt-auto" />
+        </div>
+      </Layout>
+    );
+  }
   return (
     <Layout>
       <div
@@ -127,7 +145,13 @@ export default function Playing() {
         </div>
       </div>
       <MyModal />
-      <SuccessModal />
+      <SuccessModal
+        callback={() => {
+          setQuestion(question + 1);
+          setCount(SECONDS_TO_WAIT);
+          document.getElementById("my_modal_success")?.close();
+        }}
+      />
     </Layout>
   );
 }

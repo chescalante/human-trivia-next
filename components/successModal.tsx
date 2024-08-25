@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
-export default function SuccessModal() {
+export default function SuccessModal({ callback }: { callback: any }) {
   const router = useRouter();
 
   useEffect(() => {
@@ -30,8 +30,8 @@ export default function SuccessModal() {
         <h3 className="font-bold text-lg text-center">Muy bien!</h3>
         <p className="py-4 text-center">Seguí jugando</p>
         <div className="modal-action justify-center w-full">
-          <button className="btn w-full" onClick={() => router.push("/")}>
-            Salir
+          <button className="btn w-full" onClick={() => callback()}>
+            Continuar
           </button>
         </div>
       </div>
