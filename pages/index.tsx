@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 
 export default function IndexPage() {
-
   return (
     <Layout>
       <div className="h-full flex flex-col justify-between p-4 ">
@@ -13,7 +12,7 @@ export default function IndexPage() {
             className="card bg-white "
             style={{ border: "1px solid #9C9DA2" }}
           >
-            <div className="card-body flex justify-between gap-8 p-4 mx-1">
+            <div className="card-body flex justify-between gap-8 p-6 mx-1">
               <Image
                 src="/images/ht-logo.svg" // Path relative to the public directory
                 alt="Description of image"
@@ -25,8 +24,12 @@ export default function IndexPage() {
                 <div className="text-3xl text-center font-semibold">
                   Trivia Quiz Diario
                 </div>
-                <div className="text-lg text-center text-gray-400 ">
-                  Respondé las preguntas y jugá por US$10.000!
+                <div
+                  className="text-lg text-center text-gray-400 mt-2"
+                  style={{ lineHeight: "1.2rem" }}
+                >
+                  Usá tus conocimientos para responder las preguntas y ganar
+                  $1.000.000!
                 </div>
               </div>
             </div>
@@ -47,13 +50,13 @@ export default function IndexPage() {
                   </div>
                 </div>
                 <div className="text-lg text-center font-thin text-gray-300">
-                  varios pesitos
+                  ~ $2.340 ARS
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <button className="btn btn-primary text-xl">Comenzar a jugar</button>
+        <button className="btn btn-primary text-lg">Aceptar y jugar</button>
       </div>
     </Layout>
   );
