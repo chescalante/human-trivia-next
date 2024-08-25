@@ -16,8 +16,9 @@ export default async function handler(
   // console.log("req.body: ", props);
   // console.log("req.body.answer: ", props.answer);
   console.log("body: ", req.body);
+  const payload = JSON.parse(req.body);
 
-  if (!req.body.answer)
+  if (!payload.answer)
     return res.send({
       error: "Answer must be provided",
     });
