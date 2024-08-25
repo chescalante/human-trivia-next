@@ -24,7 +24,7 @@ export default function Pay() {
       tokens: [
         {
           symbol: Tokens.WLD,
-          token_amount: tokenToDecimals(0.001, Tokens.WLD).toString(),
+          token_amount: tokenToDecimals(0.1, Tokens.WLD).toString(),
         },
       ],
       description: "Pagá tu entrada para el desafío diario y ganá",
