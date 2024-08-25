@@ -1,10 +1,7 @@
 import Layout from "../components/layout";
 import Image from "next/image";
-<<<<<<< HEAD
 import Pay from "../components/pay";
-=======
 import { useRouter } from "next/router";
->>>>>>> feat/add-play
 
 export default function IndexPage() {
   const router = useRouter();
