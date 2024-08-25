@@ -12,7 +12,7 @@ export default async function handler(
 ) {
   const session = await getServerSession(req, res, authOptions);
 
-  // const props = JSON.parse(req.body);
+  /* // const props = JSON.parse(req.body);
   // console.log("req.body: ", props);
   // console.log("req.body.answer: ", props.answer);
   console.log("body: ", req.body);
@@ -28,7 +28,7 @@ export default async function handler(
       error:
         "You must be signed in to view the protected content on this page.",
     });
-
+ */
   try {
     const db = await connectMongo();
 
@@ -38,14 +38,14 @@ export default async function handler(
     const currentGame = await gamesCollection.findOne({ active: true });
 
     if (!currentGame) throw new Error("Failed to retrieve current game");
-
+    /*
     const trivia = await triviasCollection.findOne({
       user: session.user?.name ?? "failed-to-retrieve-user",
       gameId: currentGame._id,
     });
 
     if (!trivia) throw new Error("user not allowed in the game");
-
+    console.log({ trivia });
     const currentQuestion = trivia.questions.pop();
 
     if (!currentQuestion || currentQuestion.answer)
@@ -56,7 +56,7 @@ export default async function handler(
     });
     if (!dbQuestion) throw new Error("couldnt retrieve question from db");
 
-    const isAnswerCorrect = req.body.answer === dbQuestion?.correctAnswer;
+      const isAnswerCorrect = req.body.answer === dbQuestion?.correctAnswer;
 
     trivia.questions = [...trivia.questions, currentQuestion];
 
@@ -68,16 +68,17 @@ export default async function handler(
 
     triviasCollection.updateOne(
       {
-        user: session.user?.name ?? "failed-to-retrieve-user",
+        user: "failed-to-retrieve-user",
         gameId: currentGame?._id,
       },
       {
         $set: trivia,
       }
     );
-
-    return isAnswerCorrect;
+ */
+    return res.send({ success: true });
   } catch (error) {
+    console.error({ error });
     throw new Error("Unexpected error answering question");
   }
 }

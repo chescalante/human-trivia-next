@@ -11,14 +11,14 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const session = await getServerSession(req, res, authOptions);
+  /* const session = await getServerSession(req, res, authOptions);
 
   if (!session)
     return res.send({
       error:
         "You must be signed in to view the protected content on this page.",
     });
-
+ */
   try {
     const db = await connectMongo();
 
@@ -29,35 +29,33 @@ export default async function handler(
 
     if (!currentGame) throw new Error("Failed to retrieve current game");
 
-    const trivia = await triviasCollection.findOne({
-      filter: {
-        user: session.user?.name ?? "failed-to-retrieve-user",
-        gameId: currentGame._id,
-      },
-    });
+    // TODO: FILTER TRIVIAS, throwing 500
+    const trivia = await triviasCollection.findOne();
 
     if (!trivia) throw new Error("Failed to retrieve current game");
 
     const difficulty = Math.floor(trivia?.questions.length ?? 0 / 4) + 1;
 
-    const questions = await questionsCollection.find({ difficulty }).toArray();
+    const questions = await questionsCollection.find().toArray();
     let rng = (randomInt(3000) % questions.length) + 1;
-
+    console.log();
     const { correctAnswer, ...currentQuestion } = questions[rng];
 
     if (!currentQuestion) throw new Error("couldn't retrieve a new question");
 
     const currQuestion: ITriviaQuestion = { ...currentQuestion, answer: "" };
+    console.log({ currQuestion });
 
-    trivia.questions = [...trivia?.questions, currQuestion];
-
-    triviasCollection.updateOne(
+    await triviasCollection.updateOne(
       {
-        user: session.user?.name ?? "failed-to-retrieve-user",
+        user: "failed-to-retrieve-user",
         gameId: currentGame._id,
       },
       {
-        $set: trivia,
+        $set: {
+          ...trivia,
+          questions: [...trivia?.questions, currQuestion],
+        },
       }
     );
     return res.send({ ...currentQuestion });

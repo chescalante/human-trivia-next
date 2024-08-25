@@ -18,14 +18,14 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const session = await getServerSession(req, res, authOptions);
+  /* const session = await getServerSession(req, res, authOptions);
 
   if (!session)
     return res.send({
       content:
         "This is protected content. You can access this content because you are signed in.",
     });
-
+ */
   try {
     const db = await connectMongo();
 
