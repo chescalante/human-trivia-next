@@ -33,7 +33,10 @@ export default function MyModal() {
           tus conocimientos!
         </p>
         <div className="modal-action justify-center w-full">
-          <button className="btn w-full" onClick={() => router.push("/")}>
+          <button
+            className="btn btn-primary w-full"
+            onClick={() => router.push("/")}
+          >
             Salir
           </button>
         </div>

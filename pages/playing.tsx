@@ -67,8 +67,12 @@ export default function Playing() {
       setAnswered(true);
       /* setQuestion(question + 1);
       setCount(SECONDS_TO_WAIT); */
-      // @ts-ignore
-      document.getElementById("my_modal_success")?.showModal();
+      if (question === 3) {
+        document.getElementById("my_modal_5")?.showModal();
+      } else {
+        // @ts-ignore
+        document.getElementById("my_modal_success")?.showModal();
+      }
     } catch (error) {
       console.error("Failed to fetch the question:", error);
     }
@@ -114,7 +118,7 @@ export default function Playing() {
           <Lottie
             animationData={questionAnimation}
             className="flex justify-center items-center h-28"
-            loop={true}
+            loop={false}
           />
           <div>
             <div className="text-2xl text-gray-400 text-center mt-8 mb-2">
