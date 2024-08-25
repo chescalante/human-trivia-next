@@ -38,30 +38,28 @@ export default function Pay() {
   };
 
   useEffect(() => {
-    let erudaConsole = eruda.get('console');
     if (!MiniKit.isInstalled()) {
-      erudaConsole.error("MiniKit is not installed");
+      console.error("MiniKit is not installed");
       return;
     }
 
-    erudaConsole.log("before subscribe")
 
     MiniKit.subscribe(
       ResponseEvent.MiniAppPayment,
       async (response: MiniAppPaymentPayload) => {
-        erudaConsole.log("response: ", response)
+        alert(`response: ${response}`);
         if (response.status == "success") {
-          erudaConsole.log("success!")
+          alert("success!")
           const res = await fetch(`/api/payments/confirm-pay`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(response),
           });
-          erudaConsole.log("before-payment")
+          alert("before-payment")
           const payment = await res.json();
-          erudaConsole.log("payment: ", payment)
+          alert(`payment:${payment}`)
           if (payment.success) {
-            erudaConsole.log("wtf?")
+            alert("wtf?")
             router.push("/play");
           }
         }

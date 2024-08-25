@@ -14,7 +14,7 @@ export default function App({
 }: AppProps<{ session: Session }>) {
 
   useEffect(() => {
-    import('eruda').then(eruda => eruda.default.init());
+    import('eruda').then(eruda => eruda.default.init({}));
   }, [])
 
   return (
