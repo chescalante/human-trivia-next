@@ -56,7 +56,7 @@ export default function Pay() {
         fetch(`/api/payments/confirm-pay`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ transaction_id: x.transactionHash, reference: paymentId }),
+          body: JSON.stringify({ transactionHash: x.transactionHash, reference: paymentId }),
         }).then(x => x.json())
           .then(x => { if (x.success) router.push("/play"); }); x.transactionHash
       }); router.push(" /play");

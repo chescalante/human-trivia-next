@@ -6,9 +6,16 @@ import { MiniAppPaymentSuccessPayload } from "@worldcoin/minikit-js";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { connectMongo } from "../../../lib/mongodb";
 import { Game, Payment } from "../models/types";
+import { createPublicClient, http } from "viem";
+import { waitForTransactionReceipt } from "viem/actions";
+import { optimism } from "viem/chains";
 
+// interface IRequestPayload {
+//   payload: MiniAppPaymentSuccessPayload;
+// }
 interface IRequestPayload {
-  payload: MiniAppPaymentSuccessPayload;
+  transactionHash: string;
+  reference: string;
 }
 
 export default async function handler(
@@ -18,7 +25,9 @@ export default async function handler(
   const session = await getServerSession(req, res, authOptions);
 
   if (session) {
-    const { payload } = JSON.parse(req.body) as IRequestPayload;
+    const { transactionHash, reference } = JSON.parse(
+      req.body
+    ) as IRequestPayload;
 
     const db = await connectMongo();
 
@@ -35,21 +44,29 @@ export default async function handler(
       user: session.user?.name ?? "failed-to-retrieve-user",
     });
 
-    if (currentPayment && payload.reference === currentPayment.reference) {
-      const response = await fetch(
-        `https://developer.worldcoin.org/api/v2/minikit/transaction/${payload.transaction_id}?app_id=${process.env.WLD_CLIENT_ID}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${process.env.DEV_PORTAL_API_KEY}`,
-          },
-        }
-      );
-      const transaction = await response.json();
+    if (currentPayment && reference === currentPayment.reference) {
+      // Cant do if event subsdcribev doesnt work
+      // const response = await fetch(
+      //   `https://developer.worldcoin.org/api/v2/minikit/transaction/${payload.transaction_id}?app_id=${process.env.WLD_CLIENT_ID}`,
+      //   {
+      //     method: "GET",
+      //     headers: {
+      //       Authorization: `Bearer ${process.env.DEV_PORTAL_API_KEY}`,
+      //     },
+      //   }
+      // );
+      const publicClient = createPublicClient({
+        chain: optimism,
+        transport: http(),
+      });
+
+      const response = await publicClient.waitForTransactionReceipt({
+        hash: transactionHash as `0x${string}`,
+      });
 
       const success =
-        transaction.reference == currentPayment.reference &&
-        transaction.status != "failed";
+        response.status === "success" &&
+        response.to === "0xd59664CD61db33814fBe16Eb96fd0bf00de39f7d";
 
       await paymentsCollection.updateOne(
         { _id: currentPayment._id },
@@ -57,7 +74,7 @@ export default async function handler(
           $set: {
             ...currentPayment,
             status: success ? "paid" : "failed",
-            wallet: transaction.from,
+            wallet: response.from,
           },
         }
       );
