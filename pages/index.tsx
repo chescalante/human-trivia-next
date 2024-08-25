@@ -1,10 +1,14 @@
-import { MiniKit } from "@worldcoin/minikit-js";
 import Layout from "../components/layout";
-import { useEffect, useState } from "react";
 import Image from "next/image";
+<<<<<<< HEAD
 import Pay from "../components/pay";
+=======
+import { useRouter } from "next/router";
+>>>>>>> feat/add-play
 
 export default function IndexPage() {
+  const router = useRouter();
+
   return (
     <Layout>
       <div className="h-full flex flex-col justify-between p-4 ">
@@ -57,7 +61,13 @@ export default function IndexPage() {
             </div>
           </div>
         </div>
-        <Pay />
+        {/* <Pay /> */}
+        <button
+          className="btn btn-primary text-lg"
+          onClick={() => router.push("/play")}
+        >
+          Aceptar y jugar
+        </button>
       </div>
     </Layout>
   );
