@@ -7,10 +7,11 @@ import {
   MiniAppPaymentPayload,
 } from "@worldcoin/minikit-js";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function Pay() {
   const router = useRouter();
+  const [isInstalled, setIsInstalled] = useState(false)
 
   const sendPayment = async () => {
     const res = await fetch("/api/payments/initiate-pay", {
@@ -41,6 +42,7 @@ export default function Pay() {
       return;
     }
 
+    console.log("before subscribe")
     MiniKit.subscribe(
       ResponseEvent.MiniAppPayment,
       async (response: MiniAppPaymentPayload) => {
