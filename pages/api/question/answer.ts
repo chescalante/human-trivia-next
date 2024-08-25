@@ -11,10 +11,11 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const session = await getServerSession(req, res, authOptions);
-
+  req.query;
   // const props = JSON.parse(req.body);
   // console.log("req.body: ", props);
   // console.log("req.body.answer: ", props.answer);
+  console.log("req.query;: ", req.query);
   console.log("body: ", req.body);
   const payload = JSON.parse(req.body);
 
