@@ -44,14 +44,19 @@ export default function Pay() {
     MiniKit.subscribe(
       ResponseEvent.MiniAppPayment,
       async (response: MiniAppPaymentPayload) => {
+        console.log("response: ", response)
         if (response.status == "success") {
+          console.log("success!")
           const res = await fetch(`/api/payments/confirm-pay`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(response),
           });
+          console.log("before-payment")
           const payment = await res.json();
+          console.log("payment: ", payment)
           if (payment.success) {
+            console.log("wtf?")
             router.push("/play");
           }
         }
