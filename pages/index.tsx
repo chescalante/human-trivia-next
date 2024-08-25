@@ -1,3 +1,4 @@
+import { MiniKit } from "@worldcoin/minikit-js/build"
 import Layout from "../components/layout"
 
 export default function IndexPage() {
@@ -9,6 +10,7 @@ export default function IndexPage() {
         <a href="https://next-auth.js.org">NextAuth.js</a> with {" "}
         <a href ="https://worldcoin.org/world-id">World ID</a> for authentication.
       </p>
+      MINIKIT: {MiniKit.isInstalled() ? "YES" : "NO"}
     </Layout>
   )
 }
