@@ -11,7 +11,7 @@ import SuccessModal from "../components/successModal";
 
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
-const SECONDS_TO_WAIT = 30;
+const SECONDS_TO_WAIT = 5;
 const UPDATE_INTERVAL = 10; // Update every 100ms
 
 export default function Playing() {
@@ -64,10 +64,10 @@ export default function Playing() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ answer }),
-      });
-      console.log("question: ", await res.json());
+      }).then(x => x.json());
+      console.log("result: ", res);
 
-      const successful = (await res.json()).success;
+      const successful = res.success;
 
       setAnswered(successful);
       /* setQuestion(question + 1);
