@@ -31,3 +31,11 @@ export interface ITriviaQuestion {
   answer: string;
   difficulty: number;
 }
+
+export interface Payment {
+  reference: string;
+  status: "pending" | "paid" | "failed";
+  user?: string;
+  wallet?: string;
+  gameId: ObjectId;
+}

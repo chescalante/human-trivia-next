@@ -3,7 +3,10 @@ import {
   tokenToDecimals,
   Tokens,
   PayCommandInput,
+  ResponseEvent,
+  MiniAppPaymentPayload,
 } from "@worldcoin/minikit-js";
+import { useEffect } from "react";
 
 export default function Pay() {
   const sendPayment = async () => {
@@ -28,6 +31,34 @@ export default function Pay() {
       MiniKit.commands.pay(payload);
     }
   };
+
+  useEffect(() => {
+    if (!MiniKit.isInstalled()) {
+      console.error("MiniKit is not installed");
+      return;
+    }
+
+    MiniKit.subscribe(
+      ResponseEvent.MiniAppPayment,
+      async (response: MiniAppPaymentPayload) => {
+        if (response.status == "success") {
+          const res = await fetch(`/api/payments/confirm-pay`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(response),
+          });
+          const payment = await res.json();
+          if (payment.success) {
+            // Congrats your payment was successful!
+          }
+        }
+      }
+    );
+
+    return () => {
+      MiniKit.unsubscribe(ResponseEvent.MiniAppPayment);
+    };
+  }, []);
 
   return (
     <button className="btn btn-primary text-lg" onClick={sendPayment}>
