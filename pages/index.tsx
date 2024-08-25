@@ -2,6 +2,7 @@ import { MiniKit } from "@worldcoin/minikit-js";
 import Layout from "../components/layout";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Pay from "../components/pay";
 
 export default function IndexPage() {
   return (
@@ -56,7 +57,7 @@ export default function IndexPage() {
             </div>
           </div>
         </div>
-        <button className="btn btn-primary text-lg">Aceptar y jugar</button>
+        <Pay />
       </div>
     </Layout>
   );
