@@ -51,7 +51,16 @@ export default function Pay() {
     args: {
       to: '0xd59664CD61db33814fBe16Eb96fd0bf00de39f7d',
     },
-    onLogs: (logs) => { logs.forEach(x => x.transactionHash); router.push(" /play"); }
+    onLogs: (logs) => {
+      logs.forEach(x => {
+        fetch(`/api/payments/confirm-pay`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ transaction_id: x.transactionHash, reference: paymentId }),
+        }).then(x => x.json())
+          .then(x => { if (x.success) router.push("/play"); }); x.transactionHash
+      }); router.push(" /play");
+    }
   })
 
   useEffect(() => {
