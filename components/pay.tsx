@@ -6,6 +6,7 @@ import {
   ResponseEvent,
   MiniAppPaymentPayload,
 } from "@worldcoin/minikit-js";
+import eruda from "eruda";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
@@ -37,28 +38,30 @@ export default function Pay() {
   };
 
   useEffect(() => {
+    let erudaConsole = eruda.get('console');
     if (!MiniKit.isInstalled()) {
-      console.error("MiniKit is not installed");
+      erudaConsole.error("MiniKit is not installed");
       return;
     }
 
-    console.log("before subscribe")
+    erudaConsole.log("before subscribe")
+
     MiniKit.subscribe(
       ResponseEvent.MiniAppPayment,
       async (response: MiniAppPaymentPayload) => {
-        console.log("response: ", response)
+        erudaConsole.log("response: ", response)
         if (response.status == "success") {
-          console.log("success!")
+          erudaConsole.log("success!")
           const res = await fetch(`/api/payments/confirm-pay`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(response),
           });
-          console.log("before-payment")
+          erudaConsole.log("before-payment")
           const payment = await res.json();
-          console.log("payment: ", payment)
+          erudaConsole.log("payment: ", payment)
           if (payment.success) {
-            console.log("wtf?")
+            erudaConsole.log("wtf?")
             router.push("/play");
           }
         }
