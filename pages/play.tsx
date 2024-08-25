@@ -29,7 +29,7 @@ export default function Play() {
       if (timePassed >= totalTime) {
         clearInterval(interval);
         // Navigate to the desired route
-        //router.push("/play/start");
+        router.push("/playing");
       }
     }, UPDATE_INTERVAL);
 
