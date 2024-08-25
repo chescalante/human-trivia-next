@@ -1,3 +1,4 @@
+import { Db, MongoClient } from "mongodb";
 import mongoose from "mongoose";
 
 const MONGO_URI = process.env.DB_URL as string;
@@ -8,10 +9,11 @@ if (!MONGO_URI) {
   );
 }
 
-export const connectMongo = async (): Promise<typeof mongoose> => {
-  if (mongoose.connection.readyState >= 1) {
-    return mongoose;
-  }
+export const connectMongo = async () => {
+  const client = new MongoClient(MONGO_URI);
+  await client.connect();
 
-  return mongoose.connect(MONGO_URI);
+  // Specify the database and collection
+  const database: Db = client.db("test");
+  return database;
 };

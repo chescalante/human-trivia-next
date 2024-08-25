@@ -4,24 +4,7 @@ import { authOptions } from "../auth/[...nextauth]";
 
 import type { NextApiRequest, NextApiResponse } from "next";
 import { connectMongo } from "../../../lib/mongodb";
-import Game from "../models/game";
-import Trivia from "../models/trivia";
-
-interface TriviaReply {
-  user: string;
-  gameId: string;
-  triviaStatus: "running" | "failed" | "success";
-  questions: TriviaQuestion[];
-};
-
-interface TriviaQuestion {
-  id: number;
-  dificulty: number;
-  text: string;
-  options: string[];
-  answer: string;
-  success?: boolean;
-}
+import { Game, Trivia } from "../models/types";
 
 export default async function handler(
   req: NextApiRequest,
@@ -29,27 +12,40 @@ export default async function handler(
 ) {
   const session = await getServerSession(req, res, authOptions);
 
-  if (!session)
-    return res.send({
-      error:
-        "You must be signed in to view the protected content on this page.",
-    });
+  // if (!session)
+  //   return res.send({
+  //     error:
+  //       "You must be signed in to view the protected content on this page.",
+  //   });
 
   try {
-    await connectMongo();
-
+    const db = await connectMongo();
     const userWallet = "0xblabla";
-    const currentGame = await Game.findOne({ active: true });
 
-    const trivia = await Trivia.findOne({
+    const currentGame = await db
+      .collection<Game>("games")
+      .findOne({ active: true });
+
+    if (!currentGame) throw new Error("Failed to retrieve current game");
+
+    const triviaCollection = db.collection<Trivia>("trivia");
+    const trivia = await triviaCollection.findOne({
       user: userWallet,
-      gameId: currentGame?.id,
+      gameId: currentGame._id,
     });
 
-    if (!trivia) throw new Error("Trivia not found");
+    if (trivia) throw new Error("User already participating on the the trivia");
 
-    return trivia;
+    const newTrivia = await triviaCollection.insertOne({
+      user: userWallet,
+      gameId: currentGame._id,
+      triviaStatus: "running",
+      questions: [],
+    });
+
+    return res.send({ ...newTrivia });
   } catch (error) {
-    throw new Error("Unexpected error fetching trivia");
+    console.log("error: ", error);
+    throw new Error("Unexpected error joining the trivia");
   }
 }

@@ -4,15 +4,7 @@ import { authOptions } from "../auth/[...nextauth]";
 
 import type { NextApiRequest, NextApiResponse } from "next";
 import { connectMongo } from "../../../lib/mongodb";
-import Game from "../models/game";
-import Trivia from "../models/trivia";
-
-interface TriviaReply {
-  user: string;
-  gameId: string;
-  triviaStatus: "running" | "failed" | "success";
-  questions: TriviaQuestion[];
-};
+import { Game, Trivia } from "../models/types";
 
 interface TriviaQuestion {
   id: number;
@@ -29,27 +21,34 @@ export default async function handler(
 ) {
   const session = await getServerSession(req, res, authOptions);
 
-  if (!session)
-    return res.send({
-      error:
-        "You must be signed in to view the protected content on this page.",
-    });
+  // if (!session)
+  //   return res.send({
+  //     error:
+  //       "You must be signed in to view the protected content on this page.",
+  //   });
 
   try {
-    await connectMongo();
+    const db = await connectMongo();
+
+    const gamesCollection = db.collection<Game>("games");
+    const triviaCollection = db.collection<Trivia>("trivias");
 
     const userWallet = "0xblabla";
-    const currentGame = await Game.findOne({ active: true });
+    const currentGame = await gamesCollection.findOne({ active: true });
 
-    const trivia = await Trivia.findOne({
+    if (!currentGame) throw new Error("Failed to retrieve current game");
+    console.log("currentGame: ", currentGame);
+
+    const trivia = await triviaCollection.findOne({
       user: userWallet,
-      gameId: currentGame?.id,
+      gameId: currentGame._id,
     });
 
     if (!trivia) throw new Error("Trivia not found");
 
-    return trivia;
+    return res.send({ ...trivia });
   } catch (error) {
+    console.log("error: ", error);
     throw new Error("Unexpected error fetching trivia");
   }
 }

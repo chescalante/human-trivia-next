@@ -4,8 +4,8 @@ import { authOptions } from "../auth/[...nextauth]";
 
 import type { NextApiRequest, NextApiResponse } from "next";
 import { connectMongo } from "../../../lib/mongodb";
-import Game from "../models/game";
 import { addDays } from "date-fns";
+import { Game } from "../models/types";
 
 export default async function handler(
   req: NextApiRequest,
@@ -13,24 +13,26 @@ export default async function handler(
 ) {
   const session = await getServerSession(req, res, authOptions);
 
-  if (!session)
-    return res.send({
-      error:
-        "You must be signed in to view the protected content on this page.",
-    });
+  // if (!session)
+  //   return res.send({
+  //     error:
+  //       "You must be signed in to view the protected content on this page.",
+  //   });
 
   try {
-    await connectMongo();
+    const db = await connectMongo();
 
-    const currentGame = await Game.findOne({ active: true });
+    const gamesCollection = db.collection<Game>("games");
+    const currentGame = await gamesCollection.findOne({ active: true });
 
     if (!currentGame) throw new Error("Failed to retrieve current game");
 
     currentGame.active = false;
-    currentGame.save();
 
-    Game.create({
-      startDate: Date.now(),
+    gamesCollection.updateOne({ _id: currentGame._id }, { ...currentGame });
+    gamesCollection.insertOne({
+      active: true,
+      startDate: new Date(),
       finishDate: addDays(Date.now(), 1),
       winners: [], //userIds
       prizePool: 0, // TODO: Define prizepool
@@ -41,6 +43,8 @@ export default async function handler(
     //Split prize
     const prize = currentGame.prizePool / currentGame.winners.length;
     //SEND MONEY TO WINNERS with private key
+
+    return res.send({});
   } catch (error) {
     throw new Error("Unexpected error retrieving current game");
   }

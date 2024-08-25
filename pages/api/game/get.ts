@@ -1,10 +1,9 @@
-// This is an example of to protect an API route
-import { getServerSession } from "next-auth/next"
-import { authOptions } from "../auth/[...nextauth]"
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../auth/[...nextauth]";
 
-import type { NextApiRequest, NextApiResponse } from "next"
-import { connectMongo } from "../../../lib/mongodb"
-import Game from "../models/game"
+import type { NextApiRequest, NextApiResponse } from "next";
+import { connectMongo } from "../../../lib/mongodb";
+import { Game } from "../models/types";
 
 export type GameReply = {
   id: string;
@@ -20,26 +19,27 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const session = await getServerSession(req, res, authOptions)
+  const session = await getServerSession(req, res, authOptions);
 
-  if (!session) {
-    return res.send({
-      content:
-        "This is protected content. You can access this content because you are signed in.",
-    })
-  }
+  // if (!session) {
+  //   return res.send({
+  //     content:
+  //       "This is protected content. You can access this content because you are signed in.",
+  //   })
+  // }
 
   try {
-    await connectMongo();
+    const db = await connectMongo();
 
-    const currentGame = await Game.findOne({ active: true });
+    const currentGame = await db
+      .collection<Game>("games")
+      .findOne({ active: true });
 
     if (!currentGame) throw new Error("Failed to retrieve current game");
 
-    const game: GameReply = currentGame?.toObject();
-
-    return game;
+    return res.send({ ...currentGame });
   } catch (error) {
+    console.log("error: ", error);
     throw new Error("Unexpected error retrieving current game");
   }
 }

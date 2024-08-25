@@ -4,7 +4,7 @@ import { authOptions } from "../auth/[...nextauth]";
 
 import type { NextApiRequest, NextApiResponse } from "next";
 import { connectMongo } from "../../../lib/mongodb";
-import Game from "../models/game";
+import Game from "../models/types";
 import Trivia from "../models/trivia";
 
 export default async function handler(
@@ -30,14 +30,19 @@ export default async function handler(
     });
 
   try {
-    await connectMongo();
+    const db = await connectMongo();
 
     const userWallet = "0xblabla";
-    const currentGame = await Game.findOne({ active: true });
 
-    const trivia = await Trivia.findOne({
+    const gamesCollection = db.collection<Game>("games");
+    const triviasCollection = db.collection<Trivia>("trivias");
+    const currentGame = await gamesCollection.findOne({ active: true });
+
+    if (!currentGame) throw new Error("Failed to retrieve current game");
+
+    const trivia = await triviasCollection.findOne({
       user: userWallet,
-      gameId: currentGame?.id,
+      gameId: currentGame?._id,
     });
 
     if (!trivia) throw new Error("user not allowed in the game");
